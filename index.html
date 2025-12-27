@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Search Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles to match the sketch's specific look */
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Hide scrollbar for clean mobile look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom Number Input Styling to match sketch arrows */
+        .stepper-btn {
+            font-size: 0.6rem;
+            line-height: 1;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .stepper-btn:hover {
+            color: #111827;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center">
+
+    <!-- Mobile Device Container -->
+    <div class="relative w-full max-w-md h-[90vh] bg-white shadow-2xl rounded-3xl overflow-hidden border-8 border-gray-800 flex flex-col">
+        
+        <!-- Top Bar (Phone UI) -->
+        <div class="bg-white pt-4 pb-2 px-6 flex justify-center border-b border-gray-100 z-10">
+            <div class="w-16 h-1.5 bg-gray-300 rounded-full"></div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 overflow-y-auto no-scrollbar relative">
+            
+            <!-- SCREEN 1: SEARCH FORM -->
+            <div id="screen-home" class="p-6 transition-opacity duration-300">
+                <!-- Header -->
+                <div class="mb-8">
+                    <h1 class="text-xl font-bold text-gray-800">LOGO</h1>
+                </div>
+
+                <!-- Title -->
+                <h2 class="text-3xl text-center text-gray-800 mb-8 font-medium">Lorem Ipsum</h2>
+
+                <!-- Form -->
+                <form id="flight-form" onsubmit="event.preventDefault(); navigateToResults();">
+                    
+                    <!-- From -->
+                    <div class="mb-5">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">From</label>
+                        <div class="flex border border-gray-400 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                            <input type="text" placeholder="City or Airport" class="w-full px-3 py-2 outline-none text-gray-700" value="New York">
+                            <button type="button" class="bg-gray-50 border-l border-gray-400 px-3 text-gray-600 hover:bg-gray-100">
+                                <i class="fas fa-caret-down"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- To -->
+                    <div class="mb-5">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">To</label>
+                        <div class="flex border border-gray-400 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+                            <input type="text" placeholder="City or Airport" class="w-full px-3 py-2 outline-none text-gray-700" value="London">
+                            <button type="button" class="bg-gray-50 border-l border-gray-400 px-3 text-gray-600 hover:bg-gray-100">
+                                <i class="fas fa-caret-down"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dates Row -->
+                    <div class="grid grid-cols-2 gap-4 mb-5">
+                        <!-- Fly out -->
+                        <div>
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Fly out</label>
+                            <div class="flex gap-2">
+                                <input type="text" placeholder="DD/MM" class="w-full border border-gray-400 rounded-md px-2 py-2 outline-none focus:ring-2 focus:ring-blue-500">
+                                <button type="button" class="flex-none w-10 h-10 border border-gray-400 rounded-md flex items-center justify-center text-gray-600 hover:bg-gray-50">
+                                    <i class="far fa-calendar-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Fly back -->
+                        <div>
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Fly back</label>
+                            <div class="flex gap-2">
+                                <input type="text" placeholder="DD/MM" class="w-full border border-gray-400 rounded-md px-2 py-2 outline-none focus:ring-2 focus:ring-blue-500">
+                                <button type="button" class="flex-none w-10 h-10 border border-gray-400 rounded-md flex items-center justify-center text-gray-600 hover:bg-gray-50">
+                                    <i class="far fa-calendar-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passengers Row -->
+                    <div class="grid grid-cols-2 gap-4 mb-10">
+                        <!-- Adults -->
+                        <div>
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Adults</label>
+                            <div class="flex border border-gray-400 rounded-md overflow-hidden h-10">
+                                <input type="number" id="adults-input" value="1" min="1" class="w-full px-3 outline-none text-gray-700 appearance-none m-0">
+                                <div class="flex flex-col border-l border-gray-400 w-8 bg-gray-50">
+                                    <button type="button" onclick="stepUp('adults-input')" class="stepper-btn flex-1 border-b border-gray-300 flex items-center justify-center">
+                                        <i class="fas fa-caret-up"></i>
+                                    </button>
+                                    <button type="button" onclick="stepDown('adults-input')" class="stepper-btn flex-1 flex items-center justify-center">
+                                        <i class="fas fa-caret-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Children -->
+                        <div>
+                            <label class="block text-gray-700 text-sm font-semibold mb-2">Children</label>
+                            <div class="flex border border-gray-400 rounded-md overflow-hidden h-10">
+                                <input type="number" id="children-input" value="0" min="0" class="w-full px-3 outline-none text-gray-700 appearance-none m-0">
+                                <div class="flex flex-col border-l border-gray-400 w-8 bg-gray-50">
+                                    <button type="button" onclick="stepUp('children-input')" class="stepper-btn flex-1 border-b border-gray-300 flex items-center justify-center">
+                                        <i class="fas fa-caret-up"></i>
+                                    </button>
+                                    <button type="button" onclick="stepDown('children-input')" class="stepper-btn flex-1 flex items-center justify-center">
+                                        <i class="fas fa-caret-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Continue Button -->
+                    <button type="submit" class="w-full bg-white border-2 border-gray-800 text-gray-800 font-bold py-3 px-4 rounded shadow-sm hover:bg-gray-800 hover:text-white transition-colors duration-200 uppercase tracking-wide">
+                        Continue
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- SCREEN 2: RESULTS (Hidden by default) -->
+            <div id="screen-results" class="hidden p-6 h-full flex flex-col">
+                <div class="flex items-center mb-6">
+                    <button onclick="navigateToHome()" class="text-gray-600 hover:text-gray-900 mr-4">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h2 class="text-xl font-bold text-gray-800">Search Results</h2>
+                </div>
+
+                <!-- Mock Results -->
+                <div class="space-y-4 flex-1 overflow-y-auto pb-4">
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-lg">10:00 AM</span>
+                            <span class="text-gray-500 text-sm">2h 30m</span>
+                            <span class="font-bold text-lg">12:30 PM</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Airline A</span>
+                            <span class="font-bold text-blue-600">$120</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-lg">02:15 PM</span>
+                            <span class="text-gray-500 text-sm">2h 45m</span>
+                            <span class="font-bold text-lg">05:00 PM</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Airline B</span>
+                            <span class="font-bold text-blue-600">$145</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-center mt-8">
+                        <p class="text-blue-800 font-medium">Flight search successful!</p>
+                        <p class="text-sm text-blue-600 mt-1">This screen demonstrates the navigation flow.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Home Button (Visual Only) -->
+        <div class="bg-white h-16 border-t border-gray-100 flex items-center justify-center flex-none">
+            <div class="w-12 h-12 rounded-full border-2 border-gray-300"></div>
+        </div>
+
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // Navigation Logic
+        function navigateToResults() {
+            const home = document.getElementById('screen-home');
+            const results = document.getElementById('screen-results');
+            
+            // Simple fade effect
+            home.style.opacity = '0';
+            setTimeout(() => {
+                home.classList.add('hidden');
+                results.classList.remove('hidden');
+                // Reset opacity for fade in
+                results.style.opacity = '0';
+                setTimeout(() => results.style.opacity = '1', 50);
+            }, 300);
+        }
+
+        function navigateToHome() {
+            const home = document.getElementById('screen-home');
+            const results = document.getElementById('screen-results');
+            
+            results.style.opacity = '0';
+            setTimeout(() => {
+                results.classList.add('hidden');
+                home.classList.remove('hidden');
+                setTimeout(() => home.style.opacity = '1', 50);
+            }, 300);
+        }
+
+        // Stepper Logic for Adults/Children
+        function stepUp(id) {
+            const input = document.getElementById(id);
+            input.stepUp();
+        }
+
+        function stepDown(id) {
+            const input = document.getElementById(id);
+            input.stepDown();
+        }
+    </script>
+
+    <!-- REMOTE AUDIT AGENT SCRIPT -->
+    <style>
+      .audit-highlight { 
+        outline: 4px solid #6366f1 !important; 
+        outline-offset: 2px !important;
+        transition: outline 0.2s ease-in-out;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.5) !important;
+      }
+    </style>
+    <script>
+      window.addEventListener('message', (event) => {
+        const { type, targetSelector, text, actionId } = event.data;
+        
+        const findElement = (selector, searchText) => {
+          if (selector) {
+            try {
+              const el = document.querySelector(selector);
+              if (el) return el;
+            } catch(e) {}
+          }
+          // Fallback: search by text content in interactive elements
+          const interactives = Array.from(document.querySelectorAll('button, a, input, label, [role="button"], summary'));
+          return interactives.find(el => 
+            el.innerText?.toLowerCase().includes((searchText || selector || '').toLowerCase()) ||
+            el.placeholder?.toLowerCase().includes((searchText || selector || '').toLowerCase())
+          );
+        };
+
+        const element = findElement(targetSelector, text);
+
+        if (type === 'GET_COORDS') {
+          const target = element || document.body;
+          const rect = target.getBoundingClientRect();
+          window.parent.postMessage({ 
+            type: 'COORDS_RESPONSE', 
+            actionId,
+            coords: { 
+              x: rect.left + rect.width / 2, 
+              y: rect.top + rect.height / 2 
+            } 
+          }, '*');
+          return;
+        }
+
+        if (!element) return;
+
+        // Apply visual highlight
+        element.classList.add('audit-highlight');
+        setTimeout(() => element.classList.remove('audit-highlight'), 1000);
+
+        if (type === 'CLICK') {
+          // Trigger a real user click sequence
+          element.focus();
+          const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+          element.dispatchEvent(clickEvent);
+          // Fallback for elements that don't respond to standard click dispatch
+          if (typeof element.click === 'function') element.click();
+        } else if (type === 'TYPE') {
+          element.focus();
+          element.value = text || '';
+          // Dispatch events to trigger UI framework updates (React/Vue/etc compatibility)
+          element.dispatchEvent(new Event('input', { bubbles: true }));
+          element.dispatchEvent(new Event('change', { bubbles: true }));
+          element.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'Enter' }));
+        }
+      });
+    </script>
+</body>
+</html>
